@@ -131,7 +131,7 @@ def main(section_dir):
     # ex: /scratch/yannan/TEM/bladeseq-2024.06.26-16.12.30/s017-2024.06.26-16.12.30
     subtile_dir = Path(section_dir) / 'subtiles'
     stage_positions_path = Path(section_dir) / 'metadata' / 'stage_positions.csv'
-    print(f"{subtile_dir=}, {stage_positions_path=}")
+
     # make STITCH_COORDS_DIR if it does not exist
     os.makedirs(STITCH_COORDS_DIR, exist_ok=True)
     gen_stitch_coords(str(subtile_dir), str(stage_positions_path), STITCH_COORDS_DIR)
