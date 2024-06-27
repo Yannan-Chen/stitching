@@ -3,18 +3,19 @@
 Right now this is a mess and there are many manual steps still. And this list likely has some errors/missing steps. Double check for hardcoded paths, etc.
 
 0. Download FEABAS source from [github](https://github.com/YuelongWu/feabas), into say, `~/src/feabas`. Scripts currently expect this location. 
-1. Create a python venv for feabas. Scripts currently expect this location. 
+1. Create a python venv for feabas. Scripts currently expect this location.
+    - `module load anacondapy/2023.03`
     - `python -m venv ~/feabas-venv`
     - `source ~/feabas-venv/bin/activate`
     - `pip install feabas`
-2. Construct FEABAS working directory and some config. This is where intermediate and final results will be saved. Other dirs here should be created and populated by feabas:
+3. Construct FEABAS working directory and some config. This is where intermediate and final results will be saved. Other dirs here should be created and populated by feabas:
     - / feabas working dir, for example i am using `/scratch/rmorey/feabas-mec-stitching`
         - /configs
             - stitching_configs.yaml (check the example)
         - /stitch
             - /stitch_coord - we will populate this in step 4
-3. Go to your feabas source, and modify `configs/general_configs.yaml` to point at your feabas working dir
-4. Generate stitch coords file for each section from stage positions
+4. Go to your feabas source, and modify `configs/general_configs.yaml` to point at your feabas working dir
+5. Generate stitch coords file for each section from stage positions
 - use `gen_stitch_coord.py` with the path to stage positions csv. By default this will store the coords files to `./stitch_coords` but you should modify the script to point this toward `stitch_coord` in your feabas working dir, or copy the ones you want into there.
 
     ```
