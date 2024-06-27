@@ -4,13 +4,14 @@ import numpy as np
 import os
 import click
 import re
+from pathlib import Path
 
-TIFF_ROOT = "/scratch/rmorey/mec/tiff_sections/reel1068_blade2"
+TILE_ROOT = "/scratch/yannan/TEM/bladeseq-2024.06.26-16.12.30"
 STITCH_COORDS_DIR = "./stitch_coords"
 
 RESOLUTION = 4.0  # Assuming a resolution of 4.0 nm/pixel
 TILE_SIZE = (6000, 6000)  # Size of each tile in pixels
-OVERLAP = 2000  # Overlap in pixels
+OVERLAP = 480 # Overlap in pixels
 
 # Generate supertile map from stage_positions.csv
 def generate_supertile_map(csv_path):
@@ -124,22 +125,16 @@ def run_script_for_all_csv(root_dir, stage_positions_dir, output_dir):
         # Execute the function for each file
         gen_stitch_coords(root_path, csv_path, output_dir)
 
-@click.command
-@click.argument('stage_positions_path', type=click.Path(exists=True))
-def main(stage_positions_path):
-
-    match = re.search(r"/(s\d+-\d{4}\.\d{2}\.\d{2}-\d{2}\.\d{2}\.\d{2})/", stage_positions_path)
-
-    # Extracted value
-    if match:
-        section_root_dir = match.group(1)
-    else:
-        print('no match found')
-        print(stage_positions_path)
-        exit()
-
-
-    gen_stitch_coords(f"{TIFF_ROOT}/{section_root_dir}", stage_positions_path, STITCH_COORDS_DIR)
+@click.command()
+@click.argument('section_dir', type=click.Path(exists=True))
+def main(section_dir):
+    # ex: /scratch/yannan/TEM/bladeseq-2024.06.26-16.12.30/s017-2024.06.26-16.12.30
+    subtile_dir = Path(section_dir) / 'subtiles'
+    stage_positions_path = Path(section_dir) / 'metadata' / 'stage_positions.csv'
+    print(f"{subtile_dir=}, {stage_positions_path=}")
+    # make STITCH_COORDS_DIR if it does not exist
+    os.makedirs(STITCH_COORDS_DIR, exist_ok=True)
+    gen_stitch_coords(str(subtile_dir), str(stage_positions_path), STITCH_COORDS_DIR)
     
 if __name__ == "__main__":
     main()
