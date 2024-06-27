@@ -83,7 +83,7 @@ def gen_stitch_coords(root_dir, csv_path, output_dir):
         "{RESOLUTION}\t" + str(RESOLUTION),
         "{TILE_SIZE}\t" + "\t".join(map(str, TILE_SIZE))
     ]
-    file_content.extend([f"tile_{tile_id}.tif\t{coord_x}\t{coord_y}" for tile_id, coord_x, coord_y in tile_coordinates])
+    file_content.extend([f"tile_{tile_id}.bmp\t{coord_x}\t{coord_y}" for tile_id, coord_x, coord_y in tile_coordinates])
 
     # Joining content into a single string
     file_content_str = "\n".join(file_content)
