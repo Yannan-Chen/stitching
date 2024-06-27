@@ -16,10 +16,10 @@ Right now this is a mess and there are many manual steps still. And this list li
             - /stitch_coord - we will populate this in step 4
 4. Go to your feabas source, and modify `configs/general_configs.yaml` to point at your feabas working dir
 5. Generate stitch coords file for each section from stage positions
-- use `gen_stitch_coord.py` with the path to stage positions csv. By default this will store the coords files to `./stitch_coords` but you should modify the script to point this toward `stitch_coord` in your feabas working dir, or copy the ones you want into there.
+- use `gen_stitch_coord.py` with the path to your section directory, e.g. `/scratch/yannan/TEM/bladeseq-2024.06.26-16.12.30/s017-2024.06.26-16.12.30`. By default this will store the coords files to `./stitch_coords` but you should modify the script to point this toward `stitch_coord` in your feabas working dir, or copy the ones you want into there.
 
     ```
-    python gen_stitch_coord.py /scratch/zhihaozheng/mec/acqs/3-complete/Part1_reel1068_blade2_20230921/bladeseq-2023.09.27-00.44.08/s2803-2023.09.27-00.44.09/metadata/stage_positions.csv
+    python gen_stitch_coord.py /scratch/yannan/TEM/bladeseq-2024.06.26-16.12.30/s017-2024.06.26-16.12.30
     ```
     I have been using a script like `gen_coords.sh` to do all these.
 
