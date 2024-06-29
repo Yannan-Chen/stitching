@@ -5,11 +5,14 @@ import os
 import click
 import re
 from pathlib import Path
+import shutil
+import yaml
 
-TILE_ROOT = "/scratch/yannan/TEM/bladeseq-2024.06.26-16.12.30"
-STITCH_COORDS_DIR = "./stitch_coords"
+global TILE_ROOT
+global STITCH_COORDS_DIR
 
 RESOLUTION = 4.0  # Assuming a resolution of 4.0 nm/pixel
+
 TILE_SIZE = (6000, 6000)  # Size of each tile in pixels
 OVERLAP = 480 # Overlap in pixels
 
@@ -83,7 +86,7 @@ def gen_stitch_coords(root_dir, csv_path, output_dir):
         "{RESOLUTION}\t" + str(RESOLUTION),
         "{TILE_SIZE}\t" + "\t".join(map(str, TILE_SIZE))
     ]
-    file_content.extend([f"tile_{tile_id}.bmp\t{coord_x}\t{coord_y}" for tile_id, coord_x, coord_y in tile_coordinates])
+    file_content.extend([f"tile_{tile_id}.tif\t{coord_x}\t{coord_y}" for tile_id, coord_x, coord_y in tile_coordinates])
 
     # Joining content into a single string
     file_content_str = "\n".join(file_content)
@@ -131,10 +134,28 @@ def main(section_dir):
     # ex: /scratch/yannan/TEM/bladeseq-2024.06.26-16.12.30/s017-2024.06.26-16.12.30
     subtile_dir = Path(section_dir) / 'subtiles'
     stage_positions_path = Path(section_dir) / 'metadata' / 'stage_positions.csv'
-
+   
+    # get relative working dir automatically from data dir
+    TILE_ROOT = os.path.dirname(section_dir)
+    working_dir = os.path.join("/scratch/yannan/stitched", os.path.basename(os.path.dirname(section_dir)))  
+    STITCH_COORDS_DIR = os.path.join(working_dir, "stitch/stitch_coord")
+    
     # make STITCH_COORDS_DIR if it does not exist
     os.makedirs(STITCH_COORDS_DIR, exist_ok=True)
     gen_stitch_coords(str(subtile_dir), str(stage_positions_path), STITCH_COORDS_DIR)
     
+    # create stitching configs with auto updated parameters
+    configs_dir = os.path.join(working_dir, 'configs')
+    os.makedirs(configs_dir, exist_ok = True) 
+    shutil.copyfile('./stitching_configs.yaml', os.path.join(configs_dir, 'stitching_configs.yaml'))
+
+    # create general_configs with updated working dir
+    with open('./general_configs.yaml', 'r') as f:
+        conf = yaml.safe_load(f)
+    conf['working_directory'] = working_dir
+    general_config_dir = os.path.join('/mnt/cup/people/yc1915/Code/feabas/configs', 'general_configs.yaml')
+    with open(general_config_dir, 'w+') as f:
+        yaml.dump(conf, f)
+    shutil.copyfile(general_config_dir, os.path.join(working_dir, 'configs/general_configs.yaml'))
 if __name__ == "__main__":
     main()
